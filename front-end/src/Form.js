@@ -30,7 +30,7 @@ function Form(props) {
           setDate("");
           setLocation("");
           refInput.value="";
-         // setMessage("Meeting created successfully");
+          setMessage("");
           getData().then(data => {
             props.setData(data);
           });
