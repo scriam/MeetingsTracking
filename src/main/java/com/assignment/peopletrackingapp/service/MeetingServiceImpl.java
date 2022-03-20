@@ -24,7 +24,7 @@ public class MeetingServiceImpl implements MeetingService {
     }
 
     private void validateMeeting(Meeting meeting) {
-        // check if person exists
+        // Validate meeting fields
         String person = meeting.getPerson();
         String location = meeting.getLocation();
         Date date = meeting.getDate();
@@ -40,8 +40,9 @@ public class MeetingServiceImpl implements MeetingService {
 
     }
 
+
+    // Get all the meetings from the db
     public List<Meeting> getAll() {
-        // check if person exists
         return meetingsRepository.findAll();
     }
 
