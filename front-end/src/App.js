@@ -118,7 +118,7 @@ function DateRangeColumnFilter({
   return (
     <div>
       <input
-        min={min.toISOString().slice(0, 10)}
+       // min={min.toISOString().slice(0, 10)}
         onChange={e => {
           const val = e.target.value
           setFilter((old = []) => [val ? val : undefined, old[1]])
@@ -128,7 +128,7 @@ function DateRangeColumnFilter({
       />
       {' to '}
       <input
-        max={max.toISOString().slice(0, 10)}
+        //max={max.toISOString().slice(0, 10)}
         onChange={e => {
           const val = e.target.value
           setFilter((old = []) => [old[0], val ? val.concat('T23:59:59.999Z') : undefined])
