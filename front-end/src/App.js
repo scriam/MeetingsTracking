@@ -2,19 +2,13 @@ import React from 'react'
 import { useState, useEffect } from "react";
 import styled from 'styled-components'
 import { useTable, useFilters, useGlobalFilter, useAsyncDebounce } from 'react-table'
+
 // A great library for fuzzy filtering/sorting items
 import matchSorter from 'match-sorter'
 
 import Moment from 'moment'
-
-import makeData from './makeData'
-
-import Search from './searchBar'
-
-import Autocomplete from "react-google-autocomplete";
-
-
-//import getData from './getData'
+import Form from './Form'
+import getData from './getData'
 
 const Styles = styled.div`
   padding: 1rem;
@@ -110,10 +104,10 @@ function DateRangeColumnFilter({
       //const rowDate = new Date(row.values[id])
       //const rowDate = Date.parse(row.values[id]);
       const rowDate = Moment(row.values[id],"DD-MM-YYYY").toDate();
-      console.log("AA1 " + min);
+     /* console.log("AA1 " + min);
       console.log("AA2 " + max);
       console.log("AA3 " + row.values[id]);
-      console.log("AA4 " + rowDate);
+      console.log("AA4 " + rowDate); */
       min = rowDate <= min ? rowDate : min
       max = rowDate >= max ? rowDate : max
     })
@@ -149,14 +143,9 @@ function DateRangeColumnFilter({
 function dateBetweenFilterFn(rows, id, filterValues) {
   let sd = new Date(filterValues[0]);
   let ed = new Date(filterValues[1]);
-  console.log("COMPARE1 " + rows, id, filterValues);
-  console.log("COMPARE2 " + sd)
-  console.log("COMPARE3 " + ed)
   return rows.filter(r => {
       var time = new Date(r.values[id]);
       var time = Moment(r.values[id], "DD-MM-YYYY").toDate();
-      console.log("R VAL "+ r.values[id])
-      console.log(time + " || " + sd + " || " + ed)
       if (filterValues.length === 0) return rows;
       if (isNaN(ed) && isNaN(sd)) return true;
       if (isNaN(ed)) return time>=sd;
@@ -199,7 +188,6 @@ function Table({ columns, data}) {
 
   const defaultColumn = React.useMemo(
     () => ({
-      // Let's set up our default Filter UI
       Filter: DefaultColumnFilter,
     }),
     []
@@ -227,8 +215,7 @@ function Table({ columns, data}) {
     useGlobalFilter // useGlobalFilter!
   )
 
-  // We don't want to render all of the rows for this example, so cap
-  // it for this use case
+  // Render only 50 rows
   const firstPageRows = rows.slice(0, 50)
 
   return (
@@ -279,20 +266,6 @@ function Table({ columns, data}) {
   )
 }
 
-// Define a custom filter filter function!
-function filterGreaterThan(rows, id, filterValue) {
-  return rows.filter(row => {
-    const rowValue = row.values[id]
-    return rowValue >= filterValue
-  })
-}
-
-// This is an autoRemove method on the filter function that
-// when given the new filter value and returns true, the filter
-// will be automatically removed. Normally this is just an undefined
-// check, but here, we want to remove the filter if it's not a number
-filterGreaterThan.autoRemove = val => typeof val !== 'number'
-
 function App() {
   const columns = React.useMemo(
     () => [
@@ -305,14 +278,10 @@ function App() {
         Header: 'Date',
         accessor: 
         row => {
-        console.log("DATE " + row.date);
         return Moment(row.date)
             .local()
             .format("DD-MM-YYYY") 
-            //return row.date
-
         },
-        //Filter: NumberRangeColumnFilter,
         Filter: DateRangeColumnFilter,
         filter: 'dateBetween',
       },
@@ -325,101 +294,15 @@ function App() {
     []
   )
 
-  function Form() {
-    const [name, setName] = useState("");
-    const [date, setDate] = useState("");
-    const [location, setLocation] = useState("");
-    const [message, setMessage] = useState("");
-  
-    let handleSubmit = async (e) => {
-      e.preventDefault();
-      try {
-        let res = await fetch("http://localhost:8080/app/meetings", {
-          method: "POST",
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            person: name,
-            date: date,
-            location: location,
-          }),
-        });
-        let resJson = await res.json();
-        if (res.status === 200) {
-          setName("");
-          setDate("");
-          setLocation("");
-          setMessage("User created successfully");
-          getData().then(data => setData(data));
-        } else {
-          setMessage("Error: " + resJson.message);
-        }
-
-      } catch (err) {
-        console.log(err);
-      }
-    };
-  
-    return (
-      <div className="Form">
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            value={name}
-            placeholder="Name"
-            onChange={(e) => setName(e.target.value)}
-          />
-          <input
-            type="Date"
-            value={date}
-            placeholder="Date"
-            onChange={(e) => setDate(e.target.value)}
-          />
-          <Autocomplete
-            apiKey="AIzaSyDmWLyZux2H6q_ktgqEs23UPz06lj5ItFQ"
-            onPlaceSelected={(place) => {
-            setLocation(place.formatted_address);
-            console.log(place);
-           }}
-           options={{
-            types: ["geocode"],
-          }}
-          />
-  
-          <button type="submit">Create</button>
-  
-          <div className="message">{message ? <p>{message}</p> : null}</div>
-        </form>
-      </div>
-    );
-  }
-
-  function getData() {
-  const apiUrl = 'http://localhost:8080/app/meetings';
-   return fetch(apiUrl)
-      .then((response) => response.json())
-      .then((data) => {
-       // console.log('This is your data', data);
-       // console.log('MAKE DATA', makeData(2));
-        return data;
-       // return JSON.parse(data);
-      });
-}
-
-
-
   const [data, setData] = React.useState([]);
 
   useEffect(() => {
     getData().then(data => setData(data));
   },[]); 
 
-
-  //const data = React.useMemo(() => makeData(100000), [])
   return (
     <Styles>
-      <Form/>
+      <Form setData={setData}/>
       <Table columns={columns} data={data} />
     </Styles>
   )

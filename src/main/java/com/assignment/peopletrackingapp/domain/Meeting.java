@@ -1,19 +1,18 @@
 package com.assignment.peopletrackingapp.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 
 @Data
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "meetings")
 public class Meeting {
 
@@ -21,7 +20,7 @@ public class Meeting {
     @GeneratedValue
     private long id;
 
-    @NotEmpty
+    @NotBlank
     private String person;
 
     @NotNull
@@ -29,4 +28,5 @@ public class Meeting {
 
     @NotBlank
     private String location;
+
 }
