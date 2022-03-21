@@ -20,13 +20,10 @@ public class Meeting {
     @GeneratedValue
     private long id;
 
-    @NotBlank
     private String person;
 
-    @NotNull
     private Date date;
 
-    @NotBlank
     private String location;
 
 }

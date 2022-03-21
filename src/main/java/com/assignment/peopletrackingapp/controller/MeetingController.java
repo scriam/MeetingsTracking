@@ -20,7 +20,7 @@ public class MeetingController {
     MeetingServiceImpl meetingService;
 
     @PostMapping
-    public ResponseEntity createMeeting(@RequestBody @Valid Meeting meeting) {
+    public ResponseEntity createMeeting(@RequestBody Meeting meeting) {
         Meeting createdMeeting = meetingService.create(meeting);
         return ResponseEntity.ok(createdMeeting);
     }
