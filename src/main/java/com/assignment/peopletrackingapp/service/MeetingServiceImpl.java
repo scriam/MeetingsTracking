@@ -4,7 +4,6 @@ import com.assignment.peopletrackingapp.domain.Meeting;
 import com.assignment.peopletrackingapp.exceptionhandling.InvalidMeetingException;
 import com.assignment.peopletrackingapp.repository.MeetingsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
